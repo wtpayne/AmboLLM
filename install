@@ -6,4 +6,4 @@ python3 -m venv ./venv
 
 pip install --upgrade pip
 
-pip install discord openai reflex
+pip install discord openai reflex sqlitedict python-dotenv
