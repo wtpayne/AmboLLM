@@ -11,7 +11,7 @@ import discord.ui
 import dotenv
 import sqlitedict
 
-import openai as engine
+import engine
 import database
 
 

@@ -2,7 +2,7 @@ from typing import List
 
 from common import Message, TopicSummary
 from dataclasses import asdict
-from openai import AsyncOpenAI  # type: ignore
+from engine import AsyncOpenAI  # type: ignore
 from dotenv import load_dotenv
 
 load_dotenv()  # take environment variables from .env.
