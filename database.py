@@ -8,7 +8,32 @@ convo_summaries = SqliteDict(
     "councilBotDatabase.db", tablename="convo_summaries", autocommit=True)
 questions_summaries = SqliteDict(
     "councilBotDatabase.db", tablename="questions_summaries", autocommit=True)
+conversation = SqliteDict(
+    "councilBotDatabase.db", tablename="conversation", autocommit=True)
 
+# Conversation Table
+
+def create_conversation(question_id):
+    id = str(uuid.uuid4())
+    value = {"question_id": question_id, "messages": []}
+    conversation[id] = value
+    return id
+
+def get_conversation(question_id):
+    try:
+        return conversation[question_id]
+    except:
+        return None
+
+def add_message(conversation_id, role, content):
+    message = {"role": role, "message": content}
+    conversation[conversation_id]["messages"].append(message)
+
+def get_messages(conversation_id):
+    try:
+        return conversation[conversation_id]["messages"]
+    except:
+        return None
 
 # Questions Table
 
@@ -43,7 +68,6 @@ def get_question(id):
         return None
 
 # Convo Summaries table
-
 
 def add_convo_summary(summary, question_id):
     id = str(uuid.uuid4())
