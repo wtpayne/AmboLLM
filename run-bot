@@ -2,4 +2,6 @@
 
 . ./venv/bin/activate
 
+clear
+
 ./bot.py

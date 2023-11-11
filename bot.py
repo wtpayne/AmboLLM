@@ -12,6 +12,7 @@ import dotenv
 import sqlitedict
 
 import openai as engine
+import database
 
 
 dotenv.load_dotenv()  # take environment variables from .env.
@@ -28,20 +29,6 @@ intents.guild_messages  = True
 bot                     = discord.ext.commands.Bot(
                                         command_prefix = '!',
                                         intents        = intents)
-
-db_topic      = sqlitedict.SqliteDict('db.sqlite',
-                                      tablename = 'topic',
-                                      autocommit = True)
-db_transcript = sqlitedict.SqliteDict('db.sqlite',
-                                      tablename = 'transcript',
-                                      autocommit = True)
-db_summary    = sqlitedict.SqliteDict('db.sqlite',
-                                      tablename = 'summary',
-                                      autocommit = True)
-
-db_topic['First DB topic']  = {'users': []}
-db_topic['Second DB topic'] = {'users': []}
-db_topic['Third DB topic']  = {'users': []}
 
 
 # -----------------------------------------------------------------------------
@@ -64,18 +51,29 @@ class TopicSelectMenu(discord.ui.Select):
         ctor.
 
         """
+        list_name = [it['text'] for it in database.get_questions()]
+
+        # Make sure we have some sample questions as a fallback.
+        #
+        if not list_name:
+            database.add_question(
+                'Should a Flurb be allowed to mellifulate with a Roxious Nurble?')
+            database.add_question(
+                'Where has all the rum gone?')
+            list_name = [it['text'] for it in database.get_questions()]
+
         super().__init__(
             *args,
             **kwargs,
-            options=[discord.SelectOption(label = name) for name in db_topic])
+            options=[discord.SelectOption(label = name) for name in list_name])
 
     # ---------------------------------------------------------------------
     async def callback(self, interaction):
         """
+        Defer as we want to wait for a button to be pressed.
+
         """
-        await interaction.response.send_message(
-                                f"You selected {self.values[0]}",
-                                ephemeral=True)
+        await interaction.response.defer(ephemeral=True)
 
 
 # -----------------------------------------------------------------------------
