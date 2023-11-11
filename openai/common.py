@@ -19,8 +19,8 @@ class ChatSummary:
     A summary of the chat for a given topic
     """
 
-    topic_id: str
     chat_id: str
+    topic_id: str
     summary: str
 
 

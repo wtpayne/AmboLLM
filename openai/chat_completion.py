@@ -14,7 +14,7 @@ MODEL = "gpt-4-1106-preview"
 TEMPERATURE = 1.0
 
 
-async def chat_completions(messages: List[Message]) -> Message:
+async def chat_completion(messages: List[Message]) -> Message:
     response = await client.chat.completions.create(
         model=MODEL,
         messages=[asdict(message) for message in messages],
