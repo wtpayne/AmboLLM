@@ -13,6 +13,8 @@ client = AsyncOpenAI()
 MODEL = "gpt-4-1106-preview"
 TEMPERATURE = 1.0
 
+# TODO: prompt engineering
+
 
 async def chat_completion(messages: List[Message]) -> Message:
     response = await client.chat.completions.create(
