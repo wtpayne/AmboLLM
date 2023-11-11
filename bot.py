@@ -6,6 +6,7 @@ import os
 
 import discord
 import discord.ext.commands
+import discord.ui
 import dotenv
 
 
@@ -24,6 +25,7 @@ bot                     = discord.ext.commands.Bot(
                                         command_prefix = '!',
                                         intents        = intents)
 
+
 # -----------------------------------------------------------------------------
 @bot.event
 async def on_ready():
@@ -34,10 +36,39 @@ async def on_ready():
 
 # -----------------------------------------------------------------------------
 @bot.command()
-async def hello(ctx):
-    """
-    """
-    await ctx.send('Hello!')
+async def list(ctx):
+
+    topics = ['First topic', 'Second topic']
+
+    # =========================================================================
+    class TopicSelect(discord.ui.Select):
+        """
+        """
+
+        # ---------------------------------------------------------------------
+        def __init__(self, topics, *args, **kwargs):
+            """
+            """
+            options = [discord.SelectOption(label=topic) for topic in topics]
+            super().__init__(*args, **kwargs, options=options)
+
+        # ---------------------------------------------------------------------
+        async def callback(self, interaction):
+            """
+            """
+            await interaction.response.send_message(
+                                    f"You selected {self.values[0]}",
+                                    ephemeral=True)
+
+    # Create the dropdown
+    select = TopicSelect(topics)
+
+    # Create the view and add the dropdown to it
+    view = discord.ui.View()
+    view.add_item(select)
+
+    # Send a message with the dropdown
+    await ctx.send("Select a topic:", view=view)
 
 
 # -----------------------------------------------------------------------------
