@@ -13,8 +13,10 @@ client = AsyncOpenAI()
 MODEL = "gpt-4-1106-preview"
 TEMPERATURE = 1.0
 
+# TODO: prompt engineering
 # TODO: fetch chat messages from database
-# NOTE: are the chat messages stored per topic id or only per chat id?
+# TODO: store chat summary in database
+# Question: are the chat messages stored per topic id or only per chat id?
 
 
 async def chat_summary(
