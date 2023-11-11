@@ -131,4 +131,4 @@ var/
 venv.bak/
 venv/
 wheels/
-.vscode
+.vscode/
