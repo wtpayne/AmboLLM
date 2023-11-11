@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import asyncio
 import sys
 import os
 
@@ -8,6 +9,9 @@ import discord
 import discord.ext.commands
 import discord.ui
 import dotenv
+import sqlitedict
+
+# import engine.chat_completion
 
 
 dotenv.load_dotenv()  # take environment variables from .env.
@@ -25,13 +29,25 @@ bot                     = discord.ext.commands.Bot(
                                         command_prefix = '!',
                                         intents        = intents)
 
+db_topic      = sqlitedict.SqliteDict('db.sqlite',
+                                      tablename = 'topic',
+                                      autocommit = True)
+db_transcript = sqlitedict.SqliteDict('db.sqlite',
+                                      tablename = 'transcript',
+                                      autocommit = True)
+db_summary    = sqlitedict.SqliteDict('db.sqlite',
+                                      tablename = 'summary',
+                                      autocommit = True)
+
+db_topic['First DB topic']  = {'users': []}
+db_topic['Second DB topic'] = {'users': []}
+db_topic['Third DB topic']  = {'users': []}
 
 # -----------------------------------------------------------------------------
 def _load_debate_topics():
     """
     """
-    topics = ['First topic', 'Second topic', 'Third topic']
-    return topics
+    return [item for item in db_topic]
 
 
 # -----------------------------------------------------------------------------
@@ -86,7 +102,7 @@ async def topic(ctx):
     """
 
     # Create the dropdown
-    select = TopicSelect(_load_debate_topics())
+    select   = TopicSelect(_load_debate_topics())
 
     # Create the view and add the dropdown to it
     view = discord.ui.View()
