@@ -43,12 +43,6 @@ db_topic['First DB topic']  = {'users': []}
 db_topic['Second DB topic'] = {'users': []}
 db_topic['Third DB topic']  = {'users': []}
 
-# -----------------------------------------------------------------------------
-def _load_debate_topics():
-    """
-    """
-    return [item for item in db_topic]
-
 
 # -----------------------------------------------------------------------------
 @bot.event
@@ -59,15 +53,21 @@ async def on_ready():
 
 
 # =========================================================================
-class TopicSelect(discord.ui.Select):
+class TopicSelectMenu(discord.ui.Select):
     """
+    Dropdown-style select menu for debate topics.
+
     """
     # ---------------------------------------------------------------------
-    def __init__(self, topics, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """
+        ctor.
+
         """
-        options = [discord.SelectOption(label=topic) for topic in topics]
-        super().__init__(*args, **kwargs, options=options)
+        super().__init__(
+            *args,
+            **kwargs,
+            options=[discord.SelectOption(label = name) for name in db_topic])
 
     # ---------------------------------------------------------------------
     async def callback(self, interaction):
@@ -84,7 +84,7 @@ async def summary(ctx):
     """
     """
     # Create the dropdown
-    select = TopicSelect(_load_debate_topics())
+    select = TopicSelectMenu()
 
     # Create the view and add the dropdown to it
     view = discord.ui.View()
@@ -100,20 +100,26 @@ async def topic(ctx):
     """
     """
 
-    select = TopicSelect(_load_debate_topics())
+    select = TopicSelectMenu()
 
     # -------------------------------------------------------------------------
     async def join_callback(interaction):
         """
         """
-        print(repr(select.values))
+
+        user = interaction.user
+        try:
+            await user.send(f"You have joined the topic: {select.values[0]}")
+            await interaction.response.send_message("A DM has been sent to you!", ephemeral=True)
+        except discord.errors.Forbidden:
+            await interaction.response.send_message("I'm unable to send you a DM. Please check your privacy settings.", ephemeral=True)
 
         await interaction.response.send_message("Joined the topic!",
                                             ephemeral=True)
 
     btn_join = discord.ui.Button(
                             label = 'Join',
-                            style = discord.ButtonStyle.blurple)
+                            style = discord.ButtonStyle.green)
     btn_join.callback = join_callback
 
 
