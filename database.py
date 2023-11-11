@@ -115,22 +115,22 @@ def delete_question_summary(id):
 # EXAMPLE
 
 # Questions
-question_id = add_question("Hi")
-print("Question Added", get_question(question_id))
-print("All questions", get_questions())
-print()
+# question_id = add_question("Hi")
+# print("Question Added", get_question(question_id))
+# print("All questions", get_questions())
+# print()
 
-# ConvoSummaries
-summary_id = add_convo_summary("Hello", question_id)
-summary_id = add_convo_summary("Hola", question_id)
-print()
-print("Question convo summaries", get_summaries_for_question(question_id))
-print()
+# # ConvoSummaries
+# summary_id = add_convo_summary("Hello", question_id)
+# summary_id = add_convo_summary("Hola", question_id)
+# print()
+# print("Question convo summaries", get_summaries_for_question(question_id))
+# print()
 
-# QuestionSummary
-question_summary_id = add_question_summary("Greetings", question_id)
-print("Question summary", get_summary_for_question(question_id))
-print("All questions with their summaries", get_all_question_summaries())
+# # QuestionSummary
+# question_summary_id = add_question_summary("Greetings", question_id)
+# print("Question summary", get_summary_for_question(question_id))
+# print("All questions with their summaries", get_all_question_summaries())
 
 
 
