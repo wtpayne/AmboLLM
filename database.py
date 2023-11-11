@@ -10,18 +10,50 @@ questions_summaries = SqliteDict(
     "councilBotDatabase.db", tablename="questions_summaries", autocommit=True)
 conversation = SqliteDict(
     "councilBotDatabase.db", tablename="conversation", autocommit=True)
+user = SqliteDict(
+    "councilBotDatabase.db", tablename="user", autocommit=True)
+
+# User table
+
+def add_user(user_id):
+    value = {"conversations": []}
+    user[user_id] = value
+    return id
+
+def add_user_conversation(user_id, question_id):
+    conversation_id = create_conversation(question_id, user_id)
+    user[user_id]['conversations'].append({"conversation_id": conversation_id})
+    return id
+
+def get_user_conversations(user_id):
+    try:
+        return user[user_id]
+    except:
+        return None
 
 # Conversation Table
 
-def create_conversation(question_id):
+def create_conversation(question_id, user_id):
     id = str(uuid.uuid4())
-    value = {"question_id": question_id, "messages": []}
+    value = {"question_id": question_id, "user_id": user_id, "messages": []}
     conversation[id] = value
     return id
 
-def get_conversation(question_id):
+def get_conversation(conversation_id):
     try:
-        return conversation[question_id]
+        return conversation[conversation_id]
+    except:
+        return None
+
+def get_conversation_question_id(conversation_id):
+    try:
+        return conversation[conversation_id]["question_id"]
+    except:
+        return None
+
+def get_conversation_user_id(conversation_id):
+    try:
+        return conversation[conversation_id]["user_id"]
     except:
         return None
 
