@@ -35,8 +35,31 @@ bot                     = discord.ext.commands.Bot(
 @bot.event
 async def on_ready():
     """
+    On startup, when bot ready to respond.
+
     """
-    print(f'Logged in as {bot.user.name}')
+    print(f'LOGIN: {bot.user.name}')
+
+
+# -----------------------------------------------------------------------------
+@bot.event
+async def on_message(message):
+    """
+    On message from user.
+
+    """
+    if message.author == bot.user:
+        return
+
+    if not isinstance(message.channel, discord.channel.DMChannel):
+        await bot.process_commands(message)
+        return
+
+    # msg_to_user = engine.get_response_(message, id_topic)
+    msg_to_user = 'Message from LLM to user.'
+
+    await message.channel.send(msg_to_user)
+    await bot.process_commands(message)
 
 
 # =========================================================================
