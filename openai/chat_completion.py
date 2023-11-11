@@ -1,7 +1,7 @@
-from itertools import tee
 from typing import List
 
-from dataclasses import dataclass, asdict
+from common import Message
+from dataclasses import asdict
 from openai import AsyncOpenAI  # type: ignore
 from dotenv import load_dotenv
 
@@ -12,17 +12,6 @@ client = AsyncOpenAI()
 
 MODEL = "gpt-4-1106-preview"
 TEMPERATURE = 1.0
-
-
-@dataclass
-class Message:
-    """A message in the conversation.
-
-    Role is either "system" for the prompt, "user" for user responses, or "assistant" for the model's responses.
-    """
-
-    role: str
-    content: str
 
 
 async def chat_completions(messages: List[Message]) -> Message:
