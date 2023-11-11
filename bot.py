@@ -11,7 +11,7 @@ import discord.ui
 import dotenv
 import sqlitedict
 
-# import engine.chat_completion
+import openai as engine
 
 
 dotenv.load_dotenv()  # take environment variables from .env.
@@ -94,19 +94,34 @@ async def summary(ctx):
     await ctx.send("Select a summary:", view=view)
 
 
-
 # -----------------------------------------------------------------------------
 @bot.command()
 async def topic(ctx):
     """
     """
 
-    # Create the dropdown
-    select   = TopicSelect(_load_debate_topics())
+    select = TopicSelect(_load_debate_topics())
+
+    # -------------------------------------------------------------------------
+    async def join_callback(interaction):
+        """
+        """
+        print(repr(select.values))
+
+        await interaction.response.send_message("Joined the topic!",
+                                            ephemeral=True)
+
+    btn_join = discord.ui.Button(
+                            label = 'Join',
+                            style = discord.ButtonStyle.blurple)
+    btn_join.callback = join_callback
+
 
     # Create the view and add the dropdown to it
     view = discord.ui.View()
     view.add_item(select)
+    view.add_item(btn_join)
+
 
     # Send a message with the dropdown
     await ctx.send("Select a topic:", view=view)
