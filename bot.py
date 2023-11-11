@@ -27,6 +27,14 @@ bot                     = discord.ext.commands.Bot(
 
 
 # -----------------------------------------------------------------------------
+def _load_debate_topics():
+    """
+    """
+    topics = ['First topic', 'Second topic', 'Third topic']
+    return topics
+
+
+# -----------------------------------------------------------------------------
 @bot.event
 async def on_ready():
     """
@@ -34,34 +42,51 @@ async def on_ready():
     print(f'Logged in as {bot.user.name}')
 
 
+# =========================================================================
+class TopicSelect(discord.ui.Select):
+    """
+    """
+    # ---------------------------------------------------------------------
+    def __init__(self, topics, *args, **kwargs):
+        """
+        """
+        options = [discord.SelectOption(label=topic) for topic in topics]
+        super().__init__(*args, **kwargs, options=options)
+
+    # ---------------------------------------------------------------------
+    async def callback(self, interaction):
+        """
+        """
+        await interaction.response.send_message(
+                                f"You selected {self.values[0]}",
+                                ephemeral=True)
+
+
 # -----------------------------------------------------------------------------
 @bot.command()
-async def list(ctx):
+async def summary(ctx):
+    """
+    """
+    # Create the dropdown
+    select = TopicSelect(_load_debate_topics())
 
-    topics = ['First topic', 'Second topic']
+    # Create the view and add the dropdown to it
+    view = discord.ui.View()
+    view.add_item(select)
 
-    # =========================================================================
-    class TopicSelect(discord.ui.Select):
-        """
-        """
+    # Send a message with the dropdown
+    await ctx.send("Select a summary:", view=view)
 
-        # ---------------------------------------------------------------------
-        def __init__(self, topics, *args, **kwargs):
-            """
-            """
-            options = [discord.SelectOption(label=topic) for topic in topics]
-            super().__init__(*args, **kwargs, options=options)
 
-        # ---------------------------------------------------------------------
-        async def callback(self, interaction):
-            """
-            """
-            await interaction.response.send_message(
-                                    f"You selected {self.values[0]}",
-                                    ephemeral=True)
+
+# -----------------------------------------------------------------------------
+@bot.command()
+async def topic(ctx):
+    """
+    """
 
     # Create the dropdown
-    select = TopicSelect(topics)
+    select = TopicSelect(_load_debate_topics())
 
     # Create the view and add the dropdown to it
     view = discord.ui.View()
