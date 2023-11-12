@@ -78,7 +78,11 @@ def get_conversation_user_id(conversation_id):
 
 def add_message(conversation_id, role, content):
     message = {"role": role, "content": content}
-    conversation[conversation_id]["messages"].append(message)
+    messages = conversation[conversation_id]["messages"]
+    messages.append(message)
+    copy = conversation[conversation_id]
+    copy["messages"] = messages
+    conversation[conversation_id] = copy
 
 
 def get_messages(conversation_id):
