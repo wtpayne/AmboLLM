@@ -28,7 +28,23 @@ intents.message_content = True
 intents.messages        = True
 intents.reactions       = True
 intents.guild_messages  = True
-bot = discord.ext.commands.Bot(command_prefix="!", intents=intents)
+bot                     = discord.ext.commands.Bot(
+                                                command_prefix = '!',
+                                                intents        = intents)
+
+filename_db   = 'db.sqlite'
+
+# id_user --> id_topic
+db_user       = sqlite.SqliteDict(
+                              filename_db,
+                              tablename  = 'user',
+                              autocommit = True)
+
+# id_user+id_topic -> list_transcript
+db_transcript = sqlite.SqliteDict(
+                              filename_db,
+                              tablename  = 'transcript',
+                              autocommit = True)  # id_user --> id_topic
 
 
 # -----------------------------------------------------------------------------
@@ -142,7 +158,8 @@ async def join(ctx):
 
     # -------------------------------------------------------------------------
     async def join_callback(interaction):
-        """ """
+        """
+        """
 
         topic_id = select_topic.values[0]
         user     = interaction.user
@@ -151,18 +168,16 @@ async def join(ctx):
             await user.send(f'Topic: {topic_id}')
             await interaction.response.send_message('Topic joined.',
                                                     ephemeral = True)
-            database.delete_user(str(user))
-
-            print(str(user))
-            database.add_user(str(user))
-            database.add_user_conversation(str(user), topic_id)
         except discord.errors.Forbidden:
             await interaction.response.send_message(
                 "Unable to send DM. Please check privacy settings.",
-                ephemeral = True
-            )
+                ephemeral = True)
+        else:
+            db_user[user.id] = topic_id
 
-    button_join = discord.ui.Button(label="Join", style=discord.ButtonStyle.green)
+    button_join = discord.ui.Button(
+                                label = 'Join',
+                                style = discord.ButtonStyle.green)
     button_join.callback = join_callback
     view = discord.ui.View()
     view.add_item(select_topic)
