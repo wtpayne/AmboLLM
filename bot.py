@@ -20,17 +20,15 @@ from database import database
 dotenv.load_dotenv()  # take environment variables from .env.
 
 
-intents = discord.Intents.default()
-intents.guilds = True
-intents.dm_messages = True
-intents.dm_reactions = True
+intents                 = discord.Intents.default()
+intents.guilds          = True
+intents.dm_messages     = True
+intents.dm_reactions    = True
 intents.message_content = True
-intents.messages = True
-intents.reactions = True
-intents.guild_messages = True
+intents.messages        = True
+intents.reactions       = True
+intents.guild_messages  = True
 bot = discord.ext.commands.Bot(command_prefix="!", intents=intents)
-
-button_green = discord.ButtonStyle.green
 
 
 # -----------------------------------------------------------------------------
@@ -70,14 +68,13 @@ async def on_message(message):
         await bot.process_commands(message)
         return
 
-
-    if message.content == None or message.content == "" or message.content == "!join":
+    if message.content == None or message.content == "" or message.content.startswith('!'):
         return
 
-    author = message.author
+    author             = message.author
     user_conversations = database.get_user_conversations(str(author))
-    convo_id = user_conversations["conversation"]
-    question_id = database.get_conversation_question_id(convo_id)
+    convo_id           = user_conversations["conversation"]
+    question_id        = database.get_conversation_question_id(convo_id)
     role = "user"
     content = message.content
     database.add_message(convo_id, role, content)
@@ -199,7 +196,7 @@ async def summary(ctx):
 
         topic_id = select_topic.values[0]
         summary  = database.get_summaries_for_question(topic_id)
-        interaction.response.send_message(
+        await interaction.response.send_message(
                                 'Summary is: {summary}.',
                                 ephemeral = True)
 

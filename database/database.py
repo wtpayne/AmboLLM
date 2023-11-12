@@ -1,18 +1,29 @@
 from sqlitedict import SqliteDict
 import uuid
 
-db = SqliteDict("councilBotDatabase.db")
-questions = SqliteDict("councilBotDatabase.db", tablename="questions", autocommit=True)
-convo_summaries = SqliteDict(
-    "councilBotDatabase.db", tablename="convo_summaries", autocommit=True
-)
+
+name_db             = 'councilBotDatabase.db'
+db                  = SqliteDict(name_db)
+questions           = SqliteDict(
+                            name_db,
+                            tablename  = "questions",
+                            autocommit = True)
+convo_summaries     = SqliteDict(
+                            name_db,
+                            tablename  = "convo_summaries",
+                            autocommit = True)
 questions_summaries = SqliteDict(
-    "councilBotDatabase.db", tablename="questions_summaries", autocommit=True
-)
-conversation = SqliteDict(
-    "councilBotDatabase.db", tablename="conversation", autocommit=True
-)
-user = SqliteDict("councilBotDatabase.db", tablename="user", autocommit=True)
+                            name_db,
+                            tablename  = "questions_summaries",
+                            autocommit = True)
+conversation        = SqliteDict(
+                            name_db,
+                            tablename  = "conversation",
+                            autocommit = True)
+user                = SqliteDict(
+                            name_db,
+                            tablename  = "user",
+                            autocommit = True)
 
 
 def ensure_user_and_topic(user_id, topic_id):
