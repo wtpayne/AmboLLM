@@ -221,13 +221,17 @@ async def summary(ctx):
         summary  = database.get_summary_for_question(topic_id)
         if summary:
             summary = "Summary is: " + summary["summary"]
-            await interaction.response.send_message(
-                                    summary,
-                                    ephemeral = True)
+            message_length = len(summary)
+            for i in range(0, message_length, 2000):
+                await interaction.response.send_message(
+                                        summary[i : min(message_length, i+2000)],
+                                        ephemeral = True)
         else:
             await interaction.response.send_message(
                                     'No summary found for question.',
                                     ephemeral = True)
+        
+        
 
     button_summary = discord.ui.Button(label = 'Summary',
                                        style = discord.ButtonStyle.green)
