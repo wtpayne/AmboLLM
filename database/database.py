@@ -27,14 +27,14 @@ def ensure_user_and_topic(user_id, topic_id):
 
 
 def add_user(user_id):
-    value = {'conversation': []}
+    value = {}
     user[user_id] = value
     return id
 
 
 def add_user_conversation(user_id, question_id):
     conversation_id = create_conversation(question_id, user_id)
-    user[user_id]["conversations"].append({"conversation_id": conversation_id})
+    user[user_id] = {"conversation": conversation_id}
     return conversation_id
 
 
@@ -44,7 +44,12 @@ def get_user_conversations(user_id):
     except:
         return None
 
-
+def delete_user(id):
+    try:
+        del user[id]
+    except:
+        pass
+    
 # Conversation Table
 
 
@@ -96,10 +101,9 @@ def get_messages(conversation_id):
 
 
 def add_question(question_string):
-    id = str(uuid.uuid4())
     value = {"question": question_string}
-    questions[id] = value
-    return id
+    questions[question_string] = value
+    return question_string
 
 
 def get_questions():

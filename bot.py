@@ -68,9 +68,18 @@ async def on_message(message):
         await bot.process_commands(message)
         return
 
+
+    if message.content == None or message.content == "" or message.content == "!join":
+        return
+
+    author = message.author
+    user_conversations = database.get_user_conversations(str(author))
+
+    if user_conversations != None:
+        # msg_to_user = engine.get_response_(message, user_conversations["conversation"])
     # TODO: lookup the TOPICID given message.author
-    # msg_to_user = engine.get_response_(message, id_topic)
-    msg_to_user = "Message from LLM to user."
+    
+    msg_to_user = 'Message from LLM to user.'
 
     await message.channel.send(msg_to_user)
     await bot.process_commands(message)
@@ -131,6 +140,9 @@ async def join(ctx):
             await user.send(f'Topic: {topic_id}')
             await interaction.response.send_message('Topic joined.',
                                                     ephemeral = True)
+            database.delete_user(str(user))
+            database.add_user(str(user))
+            database.add_user_conversation(str(user), topic_id)
         except discord.errors.Forbidden:
             await interaction.response.send_message(
                 "Unable to send DM. Please check privacy settings.",
