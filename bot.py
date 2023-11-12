@@ -30,6 +30,20 @@ bot                     = discord.ext.commands.Bot(
                                         command_prefix = '!',
                                         intents        = intents)
 
+button_green = discord.ButtonStyle.green
+
+# -----------------------------------------------------------------------------
+def _get_default_topics():
+    """
+    Return default topics.
+
+    """
+    database.add_question(
+        'Should a Flurb be allowed to mellifulate with a Roxious Nurble?')
+    database.add_question(
+        'Where has all the rum gone?')
+    return [it['text'] for it in database.get_questions()]
+
 
 # -----------------------------------------------------------------------------
 @bot.event
@@ -55,6 +69,7 @@ async def on_message(message):
         await bot.process_commands(message)
         return
 
+    # TODO: lookup the TOPICID given message.author
     # msg_to_user = engine.get_response_(message, id_topic)
     msg_to_user = 'Message from LLM to user.'
 
@@ -74,16 +89,10 @@ class TopicSelectMenu(discord.ui.Select):
         ctor.
 
         """
-        list_name = [it['text'] for it in database.get_questions()]
 
-        # Make sure we have some sample questions as a fallback.
-        #
+        list_name = [it['text'] for it in database.get_questions()]
         if not list_name:
-            database.add_question(
-                'Should a Flurb be allowed to mellifulate with a Roxious Nurble?')
-            database.add_question(
-                'Where has all the rum gone?')
-            list_name = [it['text'] for it in database.get_questions()]
+            list_name = _get_default_topics()
 
         super().__init__(
             *args,
@@ -101,6 +110,43 @@ class TopicSelectMenu(discord.ui.Select):
 
 # -----------------------------------------------------------------------------
 @bot.command()
+async def join(ctx):
+    """
+    Join a deliberation.
+
+    """
+
+    select_topic = TopicSelectMenu()
+
+    # -------------------------------------------------------------------------
+    async def join_callback(interaction):
+        """
+        """
+
+        user = interaction.user
+        try:
+            await user.send(f'Topic: {select_topic.values[0]}')
+            await interaction.response.send_message('Topic joined.',
+                                                    ephemeral = True)
+
+            # TODO: Save the TOPICID indexed by user (==message.author, hopefully)
+
+        except discord.errors.Forbidden:
+            await interaction.response.send_message(
+                        'Unable to send DM. Please check privacy settings.',
+                        ephemeral = True)
+
+    button_join = discord.ui.Button(label = 'Join',
+                                    style = discord.ButtonStyle.green)
+    button_join.callback = join_callback
+    view = discord.ui.View()
+    view.add_item(select_topic)
+    view.add_item(button_join)
+    await ctx.send('Select topic:', view = view)
+
+
+# -----------------------------------------------------------------------------
+@bot.command()
 async def summary(ctx):
     """
     """
@@ -114,44 +160,7 @@ async def summary(ctx):
     # Send a message with the dropdown
     await ctx.send("Select a summary:", view=view)
 
-
-# -----------------------------------------------------------------------------
-@bot.command()
-async def topic(ctx):
-    """
-    """
-
-    select = TopicSelectMenu()
-
-    # -------------------------------------------------------------------------
-    async def join_callback(interaction):
-        """
-        """
-
-        user = interaction.user
-        try:
-            await user.send(f"You have joined the topic: {select.values[0]}")
-            await interaction.response.send_message("A DM has been sent to you!", ephemeral=True)
-        except discord.errors.Forbidden:
-            await interaction.response.send_message("I'm unable to send you a DM. Please check your privacy settings.", ephemeral=True)
-
-        await interaction.response.send_message("Joined the topic!",
-                                            ephemeral=True)
-
-    btn_join = discord.ui.Button(
-                            label = 'Join',
-                            style = discord.ButtonStyle.green)
-    btn_join.callback = join_callback
-
-
-    # Create the view and add the dropdown to it
-    view = discord.ui.View()
-    view.add_item(select)
-    view.add_item(btn_join)
-
-
-    # Send a message with the dropdown
-    await ctx.send("Select a topic:", view=view)
+    database.get_summary_for_question
 
 
 # -----------------------------------------------------------------------------
