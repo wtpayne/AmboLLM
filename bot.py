@@ -74,12 +74,20 @@ async def on_message(message):
 
     author = message.author
     user_conversations = database.get_user_conversations(str(author))
+    convo_id = user_conversations["conversation"]
+    role = "user"
+    content = message.content
+    database.add_message(convo_id, role, content)
 
     # if user_conversations != None:
         # msg_to_user = engine.get_response_(message, user_conversations["conversation"])
     # TODO: lookup the TOPICID given message.author
     
     msg_to_user = 'Message from LLM to user.'
+
+    convo_id = user_conversations["conversation"]
+    role = "bot"
+    database.add_message(convo_id, role, msg_to_user)
 
     await message.channel.send(msg_to_user)
     await bot.process_commands(message)
