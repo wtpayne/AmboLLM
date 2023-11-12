@@ -12,25 +12,24 @@ import dotenv
 import sqlitedict
 
 import engine
-import database
+from database import database
 
 
 dotenv.load_dotenv()  # take environment variables from .env.
 
 
-intents                 = discord.Intents.default()
-intents.guilds          = True
-intents.dm_messages     = True
-intents.dm_reactions    = True
+intents = discord.Intents.default()
+intents.guilds = True
+intents.dm_messages = True
+intents.dm_reactions = True
 intents.message_content = True
-intents.messages        = True
-intents.reactions       = True
-intents.guild_messages  = True
-bot                     = discord.ext.commands.Bot(
-                                        command_prefix = '!',
-                                        intents        = intents)
+intents.messages = True
+intents.reactions = True
+intents.guild_messages = True
+bot = discord.ext.commands.Bot(command_prefix="!", intents=intents)
 
 button_green = discord.ButtonStyle.green
+
 
 # -----------------------------------------------------------------------------
 def _get_default_topics():
@@ -39,10 +38,10 @@ def _get_default_topics():
 
     """
     database.add_question(
-        'Should a Flurb be allowed to mellifulate with a Roxious Nurble?')
-    database.add_question(
-        'Where has all the rum gone?')
-    return [it['text'] for it in database.get_questions()]
+        "Should a Flurb be allowed to mellifulate with a Roxious Nurble?"
+    )
+    database.add_question("Where has all the rum gone?")
+    return [it["text"] for it in database.get_questions()]
 
 
 # -----------------------------------------------------------------------------
@@ -52,7 +51,7 @@ async def on_ready():
     On startup, when bot ready to respond.
 
     """
-    print(f'LOGIN: {bot.user.name}')
+    print(f"LOGIN: {bot.user.name}")
 
 
 # -----------------------------------------------------------------------------
@@ -71,7 +70,7 @@ async def on_message(message):
 
     # TODO: lookup the TOPICID given message.author
     # msg_to_user = engine.get_response_(message, id_topic)
-    msg_to_user = 'Message from LLM to user.'
+    msg_to_user = "Message from LLM to user."
 
     await message.channel.send(msg_to_user)
     await bot.process_commands(message)
@@ -83,6 +82,7 @@ class TopicSelectMenu(discord.ui.Select):
     Dropdown-style select menu for debate topics.
 
     """
+
     # ---------------------------------------------------------------------
     def __init__(self, *args, **kwargs):
         """
@@ -90,14 +90,15 @@ class TopicSelectMenu(discord.ui.Select):
 
         """
 
-        list_name = [it['text'] for it in database.get_questions()]
+        list_name = [it["text"] for it in database.get_questions()]
         if not list_name:
             list_name = _get_default_topics()
 
         super().__init__(
             *args,
             **kwargs,
-            options=[discord.SelectOption(label = name) for name in list_name])
+            options=[discord.SelectOption(label=name) for name in list_name],
+        )
 
     # ---------------------------------------------------------------------
     async def callback(self, interaction):
@@ -120,36 +121,32 @@ async def join(ctx):
 
     # -------------------------------------------------------------------------
     async def join_callback(interaction):
-        """
-        """
+        """ """
 
         user = interaction.user
         try:
-            await user.send(f'Topic: {select_topic.values[0]}')
-            await interaction.response.send_message('Topic joined.',
-                                                    ephemeral = True)
+            await user.send(f"Topic: {select_topic.values[0]}")
+            await interaction.response.send_message("Topic joined.", ephemeral=True)
 
             # TODO: Save the TOPICID indexed by user (==message.author, hopefully)
 
         except discord.errors.Forbidden:
             await interaction.response.send_message(
-                        'Unable to send DM. Please check privacy settings.',
-                        ephemeral = True)
+                "Unable to send DM. Please check privacy settings.", ephemeral=True
+            )
 
-    button_join = discord.ui.Button(label = 'Join',
-                                    style = discord.ButtonStyle.green)
+    button_join = discord.ui.Button(label="Join", style=discord.ButtonStyle.green)
     button_join.callback = join_callback
     view = discord.ui.View()
     view.add_item(select_topic)
     view.add_item(button_join)
-    await ctx.send('Select topic:', view = view)
+    await ctx.send("Select topic:", view=view)
 
 
 # -----------------------------------------------------------------------------
 @bot.command()
 async def summary(ctx):
-    """
-    """
+    """ """
     # Create the dropdown
     select = TopicSelectMenu()
 
@@ -164,16 +161,15 @@ async def summary(ctx):
 
 
 # -----------------------------------------------------------------------------
-def _main(argv = None):
-    """
-    """
+def _main(argv=None):
+    """ """
 
     if argv is None:
         argv = sys.argv
 
-    bot.run(os.environ['TOKEN_DISCORD_AMBOLLM'])
+    bot.run(os.environ["TOKEN_DISCORD_AMBOLLM"])
 
 
 # -----------------------------------------------------------------------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(_main())
