@@ -190,10 +190,9 @@ def get_convo_summary(id):
 
 
 def add_question_summary(summary, question_id):
-    id = str(uuid.uuid4())
-    value = {"question_id": question_id, "summary": summary}
-    questions_summaries[id] = value
-    return id
+    value = {"summary": summary}
+    questions_summaries[question_id] = value
+    return question_id
 
 
 def get_all_question_summaries():
@@ -210,14 +209,11 @@ def get_all_question_summaries():
 
 
 def get_summary_for_question(question_id):
-    for key, value in questions_summaries.items():
-        if question_id == value["question_id"]:
-            return {
-                "id": key,
-                "question_id": value["question_id"],
-                "summary": value["summary"],
-            }
-    return None
+    try:
+        return questions_summaries[question_id]
+    except:
+        return None
+
 
 
 def delete_question_summary(id):
