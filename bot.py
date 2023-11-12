@@ -10,6 +10,8 @@ import discord.ext.commands
 import discord.ui
 import dotenv
 import sqlitedict
+from engine.common import Message
+from engine.chat_completion import chat_completion
 
 import engine
 from database import database
@@ -75,21 +77,26 @@ async def on_message(message):
     author = message.author
     user_conversations = database.get_user_conversations(str(author))
     convo_id = user_conversations["conversation"]
+    question_id = database.get_conversation_question_id(convo_id)
     role = "user"
     content = message.content
     database.add_message(convo_id, role, content)
 
-    # if user_conversations != None:
-        # msg_to_user = engine.get_response_(message, user_conversations["conversation"])
-    # TODO: lookup the TOPICID given message.author
+    if user_conversations != None:
+        maybe_messages = database.get_messages(convo_id)
+        if maybe_messages is None:
+            raise Exception(f"No conversation with id {convo_id} found")
+
+        messages = [Message(**message) for message in maybe_messages]
+
+        response = await chat_completion(question_id, messages)
     
-    msg_to_user = 'Message from LLM to user.'
+    if not response: 
+        return 
 
-    convo_id = user_conversations["conversation"]
-    role = "bot"
-    database.add_message(convo_id, role, msg_to_user)
+    database.add_message(convo_id, response.role, response.content)
 
-    await message.channel.send(msg_to_user)
+    await message.channel.send(response.content)
     await bot.process_commands(message)
 
 
@@ -142,13 +149,14 @@ async def join(ctx):
 
         topic_id = select_topic.values[0]
         user     = interaction.user
-        database.ensure_user_and_topic(user.id, topic_id)
 
         try:
             await user.send(f'Topic: {topic_id}')
             await interaction.response.send_message('Topic joined.',
                                                     ephemeral = True)
             database.delete_user(str(user))
+
+            print(str(user))
             database.add_user(str(user))
             database.add_user_conversation(str(user), topic_id)
         except discord.errors.Forbidden:
