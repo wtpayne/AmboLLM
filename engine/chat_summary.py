@@ -19,7 +19,7 @@ async def get_chat_summary_prompt() -> Message:
     # TODO: more prompt engineering
     return Message(
         role="system",
-        content="You are a summarization engine. Summarize the users opinion on the topic in a few sentences.",
+        content="You are a summarization engine. Summarize the users opinion on the topic in a few sentences. Use brief and concise language.",
     )
 
 
