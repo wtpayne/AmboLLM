@@ -40,9 +40,9 @@ def _get_default_topics():
 
     """
     database.add_question(
-        "Should a Flurb be allowed to mellifulate with a Roxious Nurble?"
+        "What are your thoughts on charging for parking for the local library?"
     )
-    database.add_question("Where has all the rum gone?")
+    database.add_question("Would you rather allocate funding to improve local library services or renovating the local park?")
     return [it["text"] for it in database.get_questions()]
 
 
