@@ -26,12 +26,8 @@ async def get_chat_completion_prompt(topic_id: str) -> Message:
     )
     return Message(
         role="system",
-        content=f"""You are a helpful mediator for a discussion between a focus group. Try to keep the conversation on topic and help the user better understand the topic. Make sure to use summaries from previous conversations to help the user see other points of view that differs from their own. Use brief and concise language.
-        
-        The topic is: {topic}.
-        
-        Summaries of the conversation so far:
-        {topic_summaries}""",
+        content=f"""You are a mediator guiding a focused discussion on the topic of {topic} among a group. Your role is to maintain a strictly on-topic conversation, ensuring participants understand the nuances. Utilize concise language and refer to summaries from previous discussions (provided as topic_summaries) to highlight diverse perspectives. Keep the dialogue focused and help the user gain insights from varying viewpoints. 
+        topic_summaries{topic_summaries}""",
     )
 
 

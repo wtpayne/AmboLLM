@@ -15,16 +15,18 @@ MODEL = "gpt-4-1106-preview"
 TEMPERATURE = 1.0
 
 
-async def get_chat_summary_prompt() -> Message:
+async def get_chat_summary_prompt(chat_id) -> Message:
     # TODO: more prompt engineering
+
+    topic = database.get_conversation_question_id(chat_id)
     return Message(
         role="system",
-        content="You are a summarization engine. Summarize the users opinion on the topic in a few sentences. Use brief and concise language.",
+        content=f"You are a summarization engine tasked with summarizing the user's opinion on the topic of {topic}. Review the message interactions between the bot and the user and generate a concise summary capturing the key points of the user's perspective. Use brief and clear language in your summary",
     )
 
 
 async def chat_summary(chat_id: str) -> Union[ChatSummary, None]:
-    prompt = await get_chat_summary_prompt()
+    prompt = await get_chat_summary_prompt(chat_id)
     conversation = database.get_conversation(chat_id)
     if conversation is None:
         return None

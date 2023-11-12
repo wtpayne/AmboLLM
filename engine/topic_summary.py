@@ -13,16 +13,16 @@ MODEL = "gpt-4-1106-preview"
 TEMPERATURE = 1.0
 
 
-async def get_topic_summary_prompt() -> Message:
+async def get_topic_summary_prompt(topic) -> Message:
     # TODO: more prompt engineering
     return Message(
         role="system",
-        content="You are a summarization engine. Each message is from a separate conversation with various users. Summarize the general opinions on the topic from the group in a few sentences. Use brief and concise language.",
+        content=f"You are a summarization engine tasked with synthesizing general opinions on the topic of {topic} from separate conversations with various users. Each message represents a different user's perspective. Summarize the overall sentiments and key points expressed by the group in a few sentences. Use brief and concise language in your summary.",
     )
 
 
 async def topic_summary(topic_id: str) -> TopicSummary:
-    prompt = await get_topic_summary_prompt()
+    prompt = await get_topic_summary_prompt(topic_id)
     topic_summaries = database.get_summaries_for_question(topic_id)
     if len(topic_summaries) == 0:
         return TopicSummary(topic_id=topic_id, summary="No summaries yet.")
