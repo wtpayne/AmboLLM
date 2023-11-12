@@ -1,9 +1,10 @@
-from typing import List
+from typing import Union
 
-from common import Message, ChatSummary
+from engine.common import Message, ChatSummary
 from dataclasses import asdict
-from engine import AsyncOpenAI  # type: ignore
+from openai import AsyncOpenAI  # type: ignore
 from dotenv import load_dotenv
+from database import database
 
 load_dotenv()  # take environment variables from .env.
 
@@ -13,23 +14,29 @@ client = AsyncOpenAI()
 MODEL = "gpt-4-1106-preview"
 TEMPERATURE = 1.0
 
-# TODO: prompt engineering
-# TODO: fetch chat messages from database
-# TODO: store chat summary in database
-# Question: are the chat messages stored per topic id or only per chat id?
+
+async def get_chat_summary_prompt() -> Message:
+    # TODO: prompt engineering
+    return Message(
+        role="system",
+        content="You are a summarization engine. Summarize the conversation.",
+    )
 
 
-async def chat_summary(
-    chat_id: str, topic_id: str, messages: List[Message]
-) -> ChatSummary:
+async def chat_summary(chat_id: str) -> Union[ChatSummary, None]:
+    prompt = await get_chat_summary_prompt()
+    conversation = database.get_conversation(chat_id)
+    if conversation is None:
+        return None
+    messages = [Message(**messages) for messages in conversation["messages"]]
+    augmented_messages = [prompt, *messages]
+    print("Augmented messages:", augmented_messages, end="\n\n")
     response = await client.chat.completions.create(
         model=MODEL,
-        messages=[asdict(message) for message in messages]
-        + [asdict(Message(role="user", content="Summarize this conversation."))],
+        messages=list(map(asdict, augmented_messages)),  # type: ignore
         temperature=TEMPERATURE,
     )
     return ChatSummary(
         chat_id=chat_id,
-        topic_id=topic_id,
-        summary=response.choices[0].message.content,
+        summary=response.choices[0].message.content,  # type: ignore
     )

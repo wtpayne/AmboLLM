@@ -2,28 +2,32 @@ from sqlitedict import SqliteDict
 import uuid
 
 db = SqliteDict("councilBotDatabase.db")
-questions = SqliteDict("councilBotDatabase.db",
-                       tablename="questions", autocommit=True)
+questions = SqliteDict("councilBotDatabase.db", tablename="questions", autocommit=True)
 convo_summaries = SqliteDict(
-    "councilBotDatabase.db", tablename="convo_summaries", autocommit=True)
+    "councilBotDatabase.db", tablename="convo_summaries", autocommit=True
+)
 questions_summaries = SqliteDict(
-    "councilBotDatabase.db", tablename="questions_summaries", autocommit=True)
+    "councilBotDatabase.db", tablename="questions_summaries", autocommit=True
+)
 conversation = SqliteDict(
-    "councilBotDatabase.db", tablename="conversation", autocommit=True)
-user = SqliteDict(
-    "councilBotDatabase.db", tablename="user", autocommit=True)
+    "councilBotDatabase.db", tablename="conversation", autocommit=True
+)
+user = SqliteDict("councilBotDatabase.db", tablename="user", autocommit=True)
 
 # User table
+
 
 def add_user(user_id):
     value = {"conversations": []}
     user[user_id] = value
     return id
 
+
 def add_user_conversation(user_id, question_id):
     conversation_id = create_conversation(question_id, user_id)
-    user[user_id]['conversations'].append({"conversation_id": conversation_id})
-    return id
+    user[user_id]["conversations"].append({"conversation_id": conversation_id})
+    return conversation_id
+
 
 def get_user_conversations(user_id):
     try:
@@ -31,7 +35,9 @@ def get_user_conversations(user_id):
     except:
         return None
 
+
 # Conversation Table
+
 
 def create_conversation(question_id, user_id):
     id = str(uuid.uuid4())
@@ -39,11 +45,13 @@ def create_conversation(question_id, user_id):
     conversation[id] = value
     return id
 
+
 def get_conversation(conversation_id):
     try:
         return conversation[conversation_id]
     except:
         return None
+
 
 def get_conversation_question_id(conversation_id):
     try:
@@ -51,15 +59,18 @@ def get_conversation_question_id(conversation_id):
     except:
         return None
 
+
 def get_conversation_user_id(conversation_id):
     try:
         return conversation[conversation_id]["user_id"]
     except:
         return None
 
+
 def add_message(conversation_id, role, content):
-    message = {"role": role, "message": content}
+    message = {"role": role, "content": content}
     conversation[conversation_id]["messages"].append(message)
+
 
 def get_messages(conversation_id):
     try:
@@ -67,7 +78,9 @@ def get_messages(conversation_id):
     except:
         return None
 
+
 # Questions Table
+
 
 def add_question(question_string):
     id = str(uuid.uuid4())
@@ -75,13 +88,11 @@ def add_question(question_string):
     questions[id] = value
     return id
 
+
 def get_questions():
     questions_list = []
-    for (key, value) in questions.items():
-        questions_list.append({
-            "id": key,
-            "text": value["question"]
-        })
+    for key, value in questions.items():
+        questions_list.append({"id": key, "text": value["question"]})
     return questions_list
 
 
@@ -99,7 +110,9 @@ def get_question(id):
     except:
         return None
 
+
 # Convo Summaries table
+
 
 def add_convo_summary(summary, question_id):
     id = str(uuid.uuid4())
@@ -107,16 +120,20 @@ def add_convo_summary(summary, question_id):
     convo_summaries[id] = value
     return id
 
+
 def get_summaries_for_question(question_id):
     summaries_list = []
-    for (key, value) in convo_summaries.items():
-        if question_id == value['question_id']:
-            summaries_list.append({
-                "id": key,
-                "question_id": value["question_id"],
-                "summary": value['summary']
-            })
+    for key, value in convo_summaries.items():
+        if question_id == value["question_id"]:
+            summaries_list.append(
+                {
+                    "id": key,
+                    "question_id": value["question_id"],
+                    "summary": value["summary"],
+                }
+            )
     return summaries_list
+
 
 def delete_convo_summary(id):
     try:
@@ -132,7 +149,9 @@ def get_convo_summary(id):
     except:
         return None
 
+
 # Question summaries table
+
 
 def add_question_summary(summary, question_id):
     id = str(uuid.uuid4())
@@ -140,25 +159,30 @@ def add_question_summary(summary, question_id):
     questions_summaries[id] = value
     return id
 
+
 def get_all_question_summaries():
     summaries_list = []
-    for (key, value) in questions_summaries.items():
-            summaries_list.append({
+    for key, value in questions_summaries.items():
+        summaries_list.append(
+            {
                 "id": key,
                 "question": get_question(value["question_id"]),
-                "summary": value['summary']
-            })
+                "summary": value["summary"],
+            }
+        )
     return summaries_list
 
+
 def get_summary_for_question(question_id):
-    for (key, value) in questions_summaries.items():
-        if question_id == value['question_id']:
+    for key, value in questions_summaries.items():
+        if question_id == value["question_id"]:
             return {
                 "id": key,
                 "question_id": value["question_id"],
-                "summary": value['summary']
+                "summary": value["summary"],
             }
     return None
+
 
 def delete_question_summary(id):
     try:
@@ -187,7 +211,3 @@ def delete_question_summary(id):
 # question_summary_id = add_question_summary("Greetings", question_id)
 # print("Question summary", get_summary_for_question(question_id))
 # print("All questions with their summaries", get_all_question_summaries())
-
-
-
-

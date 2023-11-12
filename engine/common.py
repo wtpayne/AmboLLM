@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import List
 
 
 @dataclass
@@ -20,7 +19,6 @@ class ChatSummary:
     """
 
     chat_id: str
-    topic_id: str
     summary: str
 
 
