@@ -75,7 +75,7 @@ async def on_message(message):
     author = message.author
     user_conversations = database.get_user_conversations(str(author))
 
-    if user_conversations != None:
+    # if user_conversations != None:
         # msg_to_user = engine.get_response_(message, user_conversations["conversation"])
     # TODO: lookup the TOPICID given message.author
     
