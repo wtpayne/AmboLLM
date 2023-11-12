@@ -14,10 +14,10 @@ TEMPERATURE = 1.0
 
 
 async def get_topic_summary_prompt() -> Message:
-    # TODO: prompt engineering
+    # TODO: more prompt engineering
     return Message(
         role="system",
-        content="You are a summarization engine. Summarize the summaries of the conversations.",
+        content="You are a summarization engine. The user wants you generate a summary of all the summaries of conversations for the topic.",
     )
 
 

@@ -16,11 +16,22 @@ TEMPERATURE = 1.0
 
 
 async def get_chat_completion_prompt(topic_id: str) -> Message:
-    # TODO: prompt engineering
-    topic_summaries = database.get_summaries_for_question(topic_id)
+    # TODO: more prompt engineering
+    topic = database.get_question(topic_id)
+    topic_summaries = "\n".join(
+        [
+            summary["summary"]
+            for summary in database.get_summaries_for_question(topic_id)
+        ]
+    )
     return Message(
         role="system",
-        content="You are a helpful assistant.",
+        content=f"""You are a helpful mediator for a discussion between a focus group. Try to keep the conversation on topic and help the user better understand the topic.
+        
+        The topic is: {topic}.
+        
+        Summaries of the conversation so far:
+        {topic_summaries}""",
     )
 
 
