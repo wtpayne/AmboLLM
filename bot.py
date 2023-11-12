@@ -175,6 +175,17 @@ async def join(ctx):
 
 # -----------------------------------------------------------------------------
 @bot.command()
+async def done(ctx):
+    """
+    Indicate that the user is finished.
+
+    """
+    user_id = ctx.message.author.id
+    database.clear_user_topic(user_id)
+    await ctx.send("Removed user from topic")
+
+# -----------------------------------------------------------------------------
+@bot.command()
 async def summary(ctx):
     """
     """
