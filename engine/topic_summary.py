@@ -17,7 +17,7 @@ async def get_topic_summary_prompt() -> Message:
     # TODO: more prompt engineering
     return Message(
         role="system",
-        content="You are a summarization engine. The user wants you generate a summary of all the summaries of conversations for the topic.",
+        content="You are a summarization engine. Summarize the general opinions on the topic from the user in a few sentences.",
     )
 
 

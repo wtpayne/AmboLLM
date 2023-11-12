@@ -26,7 +26,7 @@ async def get_chat_completion_prompt(topic_id: str) -> Message:
     )
     return Message(
         role="system",
-        content=f"""You are a helpful mediator for a discussion between a focus group. Try to keep the conversation on topic and help the user better understand the topic.
+        content=f"""You are a helpful mediator for a discussion between a focus group. Try to keep the conversation on topic and help the user better understand the topic. Make sure to use summaries from previous conversations to help the user see other points of view that differs from their own.
         
         The topic is: {topic}.
         
