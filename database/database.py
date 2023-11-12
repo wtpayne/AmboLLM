@@ -14,11 +14,20 @@ conversation = SqliteDict(
 )
 user = SqliteDict("councilBotDatabase.db", tablename="user", autocommit=True)
 
+
+def ensure_user_and_topic(user_id, topic_id):
+    """
+    Ensure that user exists and is associated with topic_id
+
+    """
+    user[user_id] = {'conversation': topic_id}
+
+
 # User table
 
 
 def add_user(user_id):
-    value = {"conversations": []}
+    value = {'conversation': []}
     user[user_id] = value
     return id
 

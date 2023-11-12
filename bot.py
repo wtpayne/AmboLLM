@@ -123,16 +123,18 @@ async def join(ctx):
     async def join_callback(interaction):
         """ """
 
-        user = interaction.user
+        topic_id = select_topic.values[0]
+        user     = interaction.user
+        database.ensure_user_and_topic(user.id, topic_id)
+
         try:
-            await user.send(f"Topic: {select_topic.values[0]}")
-            await interaction.response.send_message("Topic joined.", ephemeral=True)
-
-            # TODO: Save the TOPICID indexed by user (==message.author, hopefully)
-
+            await user.send(f'Topic: {topic_id}')
+            await interaction.response.send_message('Topic joined.',
+                                                    ephemeral = True)
         except discord.errors.Forbidden:
             await interaction.response.send_message(
-                "Unable to send DM. Please check privacy settings.", ephemeral=True
+                "Unable to send DM. Please check privacy settings.",
+                ephemeral = True
             )
 
     button_join = discord.ui.Button(label="Join", style=discord.ButtonStyle.green)
@@ -146,18 +148,29 @@ async def join(ctx):
 # -----------------------------------------------------------------------------
 @bot.command()
 async def summary(ctx):
-    """ """
-    # Create the dropdown
-    select = TopicSelectMenu()
+    """
+    """
 
-    # Create the view and add the dropdown to it
+    select_topic = TopicSelectMenu()
+
+    # -------------------------------------------------------------------------
+    async def summary_callback(interaction):
+        """
+        """
+
+        topic_id = select_topic.values[0]
+        summary  = database.get_summaries_for_question(topic_id)
+        interaction.response.send_message(
+                                'Summary is: {summary}.',
+                                ephemeral = True)
+
+    button_summary = discord.ui.Button(label = 'Summary',
+                                       style = discord.ButtonStyle.green)
+    button_summary.callback = summary_callback
     view = discord.ui.View()
-    view.add_item(select)
-
-    # Send a message with the dropdown
+    view.add_item(select_topic)
+    view.add_item(button_summary)
     await ctx.send("Select a summary:", view=view)
-
-    database.get_summary_for_question
 
 
 # -----------------------------------------------------------------------------
